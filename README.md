@@ -1,4 +1,4 @@
 Ending
 ======
 
-Roguelike puzzle game.
+A puzzle game about movement and death.

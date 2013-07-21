@@ -33,7 +33,6 @@ package com.robotacid.engine {
 		public static var game:Game;
 		
 		public var data:LevelData;
-		public var previousData:LevelData;
 		public var room:Room;
 		public var blackOutMap:Array;
 		public var endingKillList:Array;
@@ -133,7 +132,6 @@ package com.robotacid.engine {
 			renderer.gameSpriteSheet.copyPixels(renderer.gameSpriteSheet, renderer.playerBuffer.rect, new Point(renderer.playerBlit.rect.x, renderer.playerBlit.rect.y));
 			foodClockGfx = new FoodClockFX(renderer.playerBlit, Renderer.WALL_COL);
 			renderer.numberBlit.setValue(data.food);
-			previousData = data.copy();
 			
 			uiManager = new UIManager();
 			uiManager.selectSoundCallback = game.selectSound;
@@ -244,7 +242,6 @@ package com.robotacid.engine {
 							if(animDelay > ANIM_FRAMES_MIN) animDelay--;
 						}
 						animAccCount = ANIM_ACC_DELAY;
-						if(!data.blockedDir(dir)) previousData.copyData(data);
 						data.playerTurn(dir);
 						if(data.map[data.player.y][data.player.x] & Room.BLOCKED){
 							game.soundQueue.addRandom("blocked", ["blocked1", "blocked2", "blocked3", "blocked4"]);

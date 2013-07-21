@@ -115,7 +115,6 @@ package {
 		public static function saveGameState():void{
 			if(game.level){
 				gameState.data = game.level.data.saveData();
-				gameState.previousData = game.level.previousData.saveData();
 				push();
 			}
 		}
