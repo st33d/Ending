@@ -1,1 +1,1 @@
-deleted previousData variable - deemed unnecessary, altered README
+deleted DIR_TO_COMPASS - deemed unnecessary, updated index.html

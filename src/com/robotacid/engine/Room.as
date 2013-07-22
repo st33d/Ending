@@ -89,7 +89,6 @@ package com.robotacid.engine {
 			4:2,
 			8:3
 		};
-		public static var DIR_TO_COMPASS:Object;
 		public static const compassPoints:Array/*Point*/ = [new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point( -1, 0)];
 		
 		public static const DIST_TO_ENDING:int = 10;
