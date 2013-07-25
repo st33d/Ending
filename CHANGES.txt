@@ -1,1 +1,1 @@
-deleted DIR_TO_COMPASS - deemed unnecessary, updated index.html
+deleted game.reset - never called (code left over from Red Rogue)

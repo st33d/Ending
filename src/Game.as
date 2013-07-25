@@ -283,27 +283,6 @@
 			}
 		}
 		
-		/* Pedantically clear all memory and re-init the project */
-		public function reset(newGame:Boolean = true):void{
-			removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			removeEventListener(Event.ENTER_FRAME, main);
-			stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-			stage.removeEventListener(Event.DEACTIVATE, onFocusLost);
-			stage.removeEventListener(Event.ACTIVATE, onFocus);
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
-			//removeEventListener(TouchEvent.TOUCH_BEGIN, touchBegin);
-			while(numChildren > 0){
-				removeChildAt(0);
-			}
-			level = null;
-			if(newGame){
-				UserData.initGameState();
-				UserData.push();
-			}
-			init();
-		}
-		
 		private function addListeners():void{
 			stage.addEventListener(Event.DEACTIVATE, onFocusLost);
 			stage.addEventListener(Event.ACTIVATE, onFocus);
