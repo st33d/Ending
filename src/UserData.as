@@ -26,6 +26,10 @@ package {
 		public static var settingsBytes:ByteArray;
 		public static var gameStateBytes:ByteArray;
 		
+		// assign these to default to writing to a file instead of the SharedObject
+		public static var fileSaveCallback:Function;
+		public static var fileLoadCallback:Function;
+		
 		private static var loadSettingsCallback:Function;
 		
 		public static var disabled:Boolean = false;
@@ -39,52 +43,75 @@ package {
 		public static function push(settingsOnly:Boolean = false):void{
 			if(disabled) return;
 			
-			var sharedObject:SharedObject = SharedObject.getLocal("ending");
-			// SharedObject.data has a nasty habit of writing direct to the file
-			// even when you're not asking it to. So we offload into a ByteArray instead.
-			settingsBytes = new ByteArray();
-			settingsBytes.writeObject(settings);
-			sharedObject.data.settingsBytes = settingsBytes;
-			if(!settingsOnly){
-				gameStateBytes = new ByteArray();
-				gameStateBytes.writeObject(gameState);
-				sharedObject.data.gameStateBytes = gameStateBytes;
-			}
-			settingsBytes = null;
-			gameStateBytes = null;
-			// wrapper to send users to manage their shared object settings if blocked
-			try{
-				sharedObject.flush();
-				sharedObject.close();
-			} catch(e:Error){
-				navigateToURL(new URLRequest("http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html"));
+			if(Boolean(fileSaveCallback)){
+				var userDataObj:Object = {
+					settings:settings,
+					gameState:gameState
+				}
+				fileSaveCallback(userDataObj);
+				
+			} else {
+				var sharedObject:SharedObject = SharedObject.getLocal("ending");
+				// SharedObject.data has a nasty habit of writing direct to the file
+				// even when you're not asking it to. So we offload into a ByteArray instead.
+				settingsBytes = new ByteArray();
+				settingsBytes.writeObject(settings);
+				sharedObject.data.settingsBytes = settingsBytes;
+				if(!settingsOnly){
+					gameStateBytes = new ByteArray();
+					gameStateBytes.writeObject(gameState);
+					sharedObject.data.gameStateBytes = gameStateBytes;
+				}
+				settingsBytes = null;
+				gameStateBytes = null;
+				// wrapper to send users to manage their shared object settings if blocked
+				try{
+					sharedObject.flush();
+					sharedObject.close();
+				} catch(e:Error){
+					if(!Game.MOBILE) navigateToURL(new URLRequest("http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html"));
+				}
 			}
 		}
 		
 		public static function pull():void{
 			if(disabled) return;
 			
-			var sharedObject:SharedObject = SharedObject.getLocal("ending");
+			if(Boolean(fileLoadCallback)){
+				var userDataObj:Object = fileLoadCallback();
+				if(userDataObj){
+					if(userDataObj.settings){
+						overwrite(settings, userDataObj.settings);
+					}
+					if(userDataObj.gameState){
+						overwrite(gameState, userDataObj.gameState);
+					}
+				}
+				
+			} else {
 			
-			// comment out the following blocks to flush save state bugs
-			
-			// the overwrite method is used to ensure older save data does not delete new features
-			if(sharedObject.data.settingsBytes){
-				settingsBytes = sharedObject.data.settingsBytes;
-				overwrite(settings, settingsBytes.readObject());
-			}
-			if(sharedObject.data.gameStateBytes){
-				gameStateBytes = sharedObject.data.gameStateBytes;
-				overwrite(gameState, gameStateBytes.readObject());
-			}/**/
-			settingsBytes = null;
-			gameStateBytes = null;
-			// wrapper to send users to manage their shared object settings if blocked
-			try{
-				sharedObject.flush();
-				sharedObject.close();
-			} catch(e:Error){
-				navigateToURL(new URLRequest("http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html"));
+				var sharedObject:SharedObject = SharedObject.getLocal("ending");
+				
+				// comment out the following blocks to flush save state bugs
+				
+				// the overwrite method is used to ensure older save data does not delete new features
+				if(sharedObject.data.settingsBytes){
+					settingsBytes = sharedObject.data.settingsBytes;
+					overwrite(settings, settingsBytes.readObject());
+				}
+				if(sharedObject.data.gameStateBytes){
+					gameStateBytes = sharedObject.data.gameStateBytes;
+					overwrite(gameState, gameStateBytes.readObject());
+				}/**/
+				settingsBytes = null;
+				gameStateBytes = null;
+				// wrapper to send users to manage their shared object settings if blocked
+				try{
+					sharedObject.flush();
+					sharedObject.close();
+				} catch(e:Error){
+					if(!Game.MOBILE) navigateToURL(new URLRequest("http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html"));
+				}
 			}
 		}
 		
@@ -103,8 +130,6 @@ package {
 		
 		/* This is populated on the fly by com.robotacid.level.Content */
 		public static function initGameState():void{
-			var i:int, j:int;
-			
 			gameState = {
 				data:null,
 				previousData:null
@@ -136,30 +161,6 @@ package {
 			for(i = 0; i < Library.TOTAL_LEVELS; i++){
 				settings.completed[i] = false;
 			}
-		}
-		
-		/* Push settings data to the shared object */
-		public static function saveSettings():void{
-		}
-		
-		/* Saves the settings to a file */
-		public static function saveSettingsFile():void{
-			settingsBytes = new ByteArray();
-			settingsBytes.writeObject(settings);
-			FileManager.save(settingsBytes, "settings.dat");
-			settingsBytes = null;
-		}
-		
-		/* Loads settings and executes a callback when finished */
-		public static function loadSettingsFile(callback:Function = null):void{
-			loadSettingsCallback = callback;
-			FileManager.load(loadSettingsFileComplete, null, [FileManager.DAT_FILTER]);
-		}
-		private static function loadSettingsFileComplete():void{
-			settingsBytes = FileManager.data;
-			overwrite(settings, settingsBytes.readObject());
-			if(Boolean(loadSettingsCallback)) loadSettingsCallback();
-			loadSettingsCallback = null;
 		}
 		
 	}

@@ -1,1 +1,1 @@
-deleted game.reset - never called (code left over from Red Rogue)
+UserData calling navigateToURL on mobile solved, added hooks for saving settings to file, fixed swap button graphic

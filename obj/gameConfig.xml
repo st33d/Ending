@@ -16,7 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'25/07/2013'</value>
+      <value>'28/07/2013'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -32,13 +32,13 @@
     </define>
     <verbose-stacktraces>true</verbose-stacktraces>
     <source-path append="true">
-      <path-element>C:\Users\st33d\Documents\ending\86\src</path-element>
+      <path-element>C:\Users\st33d\Documents\ending\87\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <include-libraries />
   </compiler>
   <file-specs>
-    <path-element>C:\Users\st33d\Documents\ending\86\src\Preloader.as</path-element>
+    <path-element>C:\Users\st33d\Documents\ending\87\src\Preloader.as</path-element>
   </file-specs>
   <default-background-color>#FFFFFF</default-background-color>
   <default-frame-rate>30</default-frame-rate>
